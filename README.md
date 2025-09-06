@@ -222,8 +222,8 @@
         <section class="panel" id="panel-page2" data-section="page2">
           <div class="grid">
             <div class="col-12">
-              <label class="required" for="Shift No">OTP Shift No</label>
-              <input id="Shift No" type="text" placeholder="e.g., 000xxxx" />
+              <label class="required" for="shiftNo">OTP Shift No</label>
+              <input id="shiftNo" type="text" placeholder="e.g., 000xxxx" />
               <div class="muted">Will be appended to the filename. (Required to proceed.)</div>
             </div>
 
@@ -519,7 +519,7 @@
     const shiftSel = document.getElementById("shift");
     const cdmSel = document.getElementById("cdm");
     const dateInput = document.getElementById("theDate");
-    const customInput = document.getElementById("Shift No");
+    const shiftNoInput = document.getElementById("shiftNo");
 
     // uploads
     const dropzone = document.getElementById("dropzone");
@@ -555,7 +555,7 @@
         sanitizeForFilename(cdmSel.value || "CDM"),
         fmtDateYYYYMMDD(dateInput.value || new Date())
       ];
-      const custom = sanitizeForFilename(customInput.value).replace(/^-+/, "");
+      const custom = sanitizeForFilename(shiftNoInput.value).replace(/^-+/, "");
       if (custom) parts.push(custom);
       return parts.join("_") + ".pdf";
     }
@@ -606,7 +606,7 @@
 
     /* === Validation & Nav state === */
     function page1Valid(){ return staffNameSel.value && lineSel.value && stationSel.value && equipSel.value && shiftSel.value && cdmSel.value && dateInput.value; }
-    function page2Valid(){ return !!customInput.value.trim(); }
+    function page2Valid(){ return !!shiftNoInput.value.trim(); }
     function page3Valid(){ return uploadedFiles.length > 0; }
 
     function updateSidebarState(){
@@ -645,7 +645,7 @@
       staffSearch.value=""; populateStaff(""); staffNameSel.value="";
       lineSel.value=""; stationSel.innerHTML=`<option value="" disabled selected>— Choose station —</option>`;
       equipSel.innerHTML=`<option value="" disabled selected>— Choose equipment —</option>`;
-      shiftSel.value=""; cdmSel.value=""; initDate(); customInput.value="";
+      shiftSel.value=""; cdmSel.value=""; initDate(); shiftNoInput.value="";
       uploadedFiles=[]; renderFilesList(); refreshPreview(); updateSidebarState(); setActive("page1");
     }
     function copyTextToClipboard(text, btn, label="Copy"){
@@ -885,7 +885,7 @@
         ["Equipment", equipSel.value || "-"],
         ["Shift", shiftSel.value || "-"],
         ["CDM", cdmSel.value || "-"],
-        ["Shift No", customInput.value || "-"]
+        ["Shift No", shiftNoInput.value || "-"]
       ];
       kv.forEach(([k,v])=>{ doc.text(`${k}: ${v}`, margin, y); y+=lineH; });
 
@@ -989,7 +989,7 @@
     shiftSel.addEventListener("change", ()=>{ updateSidebarState(); syncFooterButtons(); refreshPreview(); });
     cdmSel.addEventListener("change", ()=>{ updateSidebarState(); syncFooterButtons(); refreshPreview(); });
     dateInput.addEventListener("change", ()=>{ updateSidebarState(); syncFooterButtons(); refreshPreview(); });
-    customInput.addEventListener("input", ()=>{ updateSidebarState(); syncFooterButtons(); refreshPreview(); });
+    shiftNoInput.addEventListener("input", ()=>{ updateSidebarState(); syncFooterButtons(); refreshPreview(); });
 
     copyBtn.addEventListener("click", ()=> copyTextToClipboard(buildFilename(), copyBtn, "Copy Name"));
     resetBtn.addEventListener("click", resetAll);
