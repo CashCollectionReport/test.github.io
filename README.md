@@ -49,19 +49,40 @@
     .navbtn.done[data-theme="p4"] .check { background:#86efac; }
 
     .content { background:#fff; padding: 20px 22px 24px; }
-    .grid { display: grid; gap: 16px; grid-template-columns: repeat(12,1fr); }
+
+    /* ↓↓↓ Tighter grid spacing */
+    .grid { display: grid; gap: 8px; grid-template-columns: repeat(12,1fr); }
     .col-3 { grid-column: span 3; }
     .col-4 { grid-column: span 4; }
     .col-6 { grid-column: span 6; }
     .col-8 { grid-column: span 8; }
     .col-12 { grid-column: span 12; }
 
-    label { display:block; font-weight:600; margin-bottom:6px; color:#0a0a0a; }
-    select, input[type="text"], input[type="date"], input[type="file"] {
-      width: 100%; padding: 10px 12px; border-radius: 10px; border: 1px solid #d6d6de; background:#fff;
+    /* ↓↓↓ Labels closer to inputs */
+    label { display:block; font-weight:600; margin-bottom:3px; color:#0a0a0a; }
+
+    /* ↓↓↓ Inputs taller & allow full text (no clipping) */
+    select,
+    input[type="text"],
+    input[type="date"],
+    input[type="file"] {
+      width: 100%;
+      min-height: 42px;              /* ensure enough height */
+      padding: 8px 10px;             /* balanced padding */
+      border-radius: 10px;
+      border: 1px solid #d6d6de;
+      background:#fff;
+      font-size: 14px;
+      line-height: 1.4;
+      white-space: normal;           /* allow wrapping where supported */
+      word-break: break-word;        /* prevent clipping of long tokens */
+      overflow: visible;
     }
+    /* Allow options text to wrap inside dropdown lists (supported browsers) */
+    select option { white-space: normal; }
+
     .muted { color:#475569; font-size: 12px; }
-    .row { display:flex; gap: 10px; align-items:center; }
+    .row { display:flex; gap: 8px; align-items:center; } /* was 10px */
     .required::after { content:" *"; color:#ef4444; }
 
     .out {
@@ -114,6 +135,8 @@
     .num { width: 110px; }
     .num input {
       width: 100%; padding:8px 10px; border-radius:8px; border:1px solid #d6d6de; text-align:right;
+      min-height: 36px;             /* match new control height */
+      line-height: 1.3;
     }
     .kpi { display:flex; gap:10px; flex-wrap:wrap; }
     .kpi > div {
@@ -835,6 +858,7 @@
       });
 
       // Write column totals + grand
+      const pmIds = { cash:"tot_cash", cc:"tot_cc", dc:"tot_dc", spay:"tot_spay", ewallet:"tot_ewallet", duitnow:"tot_duitnow" };
       Object.entries(pmIds).forEach(([k,id])=>{
         const el = document.getElementById(id);
         el.value = fmt(colTotals[k]);
@@ -895,7 +919,9 @@
       doc.text(`Cash from Denominations: RM ${fmt(parseFloat(cashDenomTotalAmt.value||"0"))}`, margin, y); y+=lineH;
 
       // Payment method totals (after refunds; includes product subtables)
-      Object.entries(pmIds).forEach(([k,id])=>{
+      const pmLabels = { cash:"Cash", cc:"Credit Card", dc:"Debit Card", spay:"Spay", ewallet:"Other E-Wallet", duitnow:"DuitNow" };
+      const pmIds2 = { cash:"tot_cash", cc:"tot_cc", dc:"tot_dc", spay:"tot_spay", ewallet:"tot_ewallet", duitnow:"tot_duitnow" };
+      Object.entries(pmIds2).forEach(([k,id])=>{
         const v = document.getElementById(id).value || "0.00";
         doc.text(`${pmLabels[k]}: RM ${v}`, margin, y); y+=lineH;
       });
