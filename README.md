@@ -51,8 +51,8 @@
     .content { background:#fff; padding: 5px; }
 
     /* ↓↓↓ Tighter grid spacing */
-    .grid { display: grid; gap: 0px; grid-template-columns: repeat(5,1fr); }
-    .col-3 { grid-column: span 8; }
+    .grid { display: grid; gap: 0px; grid-template-columns: repeat(10,1fr); }
+    .col-3 { grid-column: span 6; }
     .col-4 { grid-column: span 8; }
     .col-6 { grid-column: span 8; }
     .col-8 { grid-column: span 8; }
@@ -226,7 +226,7 @@
               </select>
             </div>
 
-            <div class="col-3">
+            <div class="col-6">
               <label class="required" for="cdm">CDM Location</label>
               <select id="cdm">
                 <option value="" selected disabled>— Choose CDM —</option>
