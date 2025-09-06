@@ -51,10 +51,10 @@
     .content { background:#fff; padding: 20px 22px 24px; }
 
     /* ↓↓↓ Tighter grid spacing */
-    .grid { display: grid; gap: 8px; grid-template-columns: repeat(12,1fr); }
-    .col-3 { grid-column: span 3; }
+    .grid { display: grid; gap: 0px; grid-template-columns: repeat(12,1fr); }
+    .col-3 { grid-column: span 6; }
     .col-4 { grid-column: span 4; }
-    .col-6 { grid-column: span 6; }
+    .col-6 { grid-column: span 8; }
     .col-8 { grid-column: span 8; }
     .col-12 { grid-column: span 12; }
 
@@ -169,7 +169,7 @@
           2. Sale Details <small>(Sale Summary)</small><span class="check">✓</span>
         </button>
         <button class="navbtn" id="btn-page3" data-target="page3" data-theme="p3" role="tab" aria-selected="false" disabled>
-          3. Uploads <small>(PDF/Images/Camera)</small><span class="check">✓</span>
+          3. Uploads <small>(PDF/Images)</small><span class="check">✓</span>
         </button>
         <button class="navbtn" id="btn-page4" data-target="page4" data-theme="p4" role="tab" aria-selected="false" disabled>
           4. Review & Submit <small>(PDF)</small><span class="check">✓</span>
