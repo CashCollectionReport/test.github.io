@@ -41,13 +41,13 @@
     /* Main content */
     .content {
       background:#fff;
-      padding: 16px;
+      padding: 6px;
     }
 
     /* Buttons in the sidebar */
     .navbtn {
       text-align: left; border: 1px solid rgba(0,0,0,.12); background: transparent; color:#0e0e0e;
-      padding: 10px 12px; border-radius: 14px; cursor: pointer; font-weight:600;
+      padding: 10px 12px; border-radius: 20px; cursor: pointer; font-weight:600;
       display:flex; align-items:flex-start; justify-content:space-between; gap:8px;
       transition: transform .05s ease, background .2s ease, border-color .2s ease;
       white-space: normal; line-height: 1.2;
@@ -71,17 +71,17 @@
     .navbtn.done[data-theme="p4"] .check { background:#86efac; }
 
     /* Grid helpers */
-    .grid { display: grid; gap: 10px 18px; grid-template-columns: repeat(12,minmax(0,1fr)); }
-    .col-3 { grid-column: span 3; } .col-4 { grid-column: span 4; } .col-6 { grid-column: span 6; } .col-8 { grid-column: span 8; } .col-12 { grid-column: span 12; }
+    .grid { display: grid; gap: 2px 20px; grid-template-columns: repeat(12,minmax(0,1fr)); }
+    .col-3 { grid-column: span 8; } .col-4 { grid-column: span 8; } .col-6 { grid-column: span 8; } .col-8 { grid-column: span 8; } .col-12 { grid-column: span 12; }
     @media (max-width: 960px) { .col-3, .col-4, .col-6, .col-8 { grid-column: span 12; } }
 
-    label { display:block; font-weight:600; margin-bottom:4px; color:#0a0a0a; }
+    label { display:block; font-weight:600; margin-bottom:2px; color:#0a0a0a; }
     select, input[type="text"], input[type="date"], input[type="email"], textarea, input[type="file"], input[type="number"] {
-      width: 100%; padding: 8px 10px; border-radius: 10px; border: 1px solid #d6d6de; background:#fff; min-width: 0;
-      min-height: 40px;
+      width: 100%; padding: 7px 9px; border-radius: 10px; border: 1px solid #d6d6de; background:#fff; min-width: 0;
+      min-height: 38px;
     }
     textarea { min-height: 96px; resize: vertical; }
-    .muted { color:#475569; font-size: 12px; margin-top:4px; }
+    .muted { color:#475569; font-size: 12px; margin-top:2px; }
     .row { display:flex; gap: 8px; align-items:center; flex-wrap: wrap; }
     .required::after { content:" *"; color:#ef4444; }
 
@@ -99,7 +99,6 @@
     /* Align columns at top */
     .col-6, .col-3, .col-4 { align-self:start; }
 
-    /* (rest of your CSS like .out, .btn, .footer, .table, etc. unchanged) */
   </style>
 </head>
 
@@ -204,7 +203,7 @@
 
               <!-- A. OTP Cash Denomination -->
               <div class="col-12">
-                <h3 style="margin:18px 0 8px;">A. OTP Cash Denomination (Notes & Coins)</h3>
+                <h3 style="margin:12px 0 6px;">A. OTP Cash Denomination (Notes & Coins)</h3>
                 <div class="help">Enter quantity per denomination. Amount auto-calculates.</div>
                 <div class="table-wrap">
                   <table class="table" id="cashDenomTable" aria-label="OTP Cash Denomination">
