@@ -26,7 +26,8 @@
       display: grid;
       grid-template-columns: 260px 1fr;
       gap: 0;
-      background:#fff;  /* use white background */
+      min-height: calc(100vh - 140px); /* viewport height minus header + margins */
+      background:#252e97;
     }
 
     /* Sticky sidebar – stays put while main content scrolls */
@@ -35,22 +36,27 @@
       padding: 12px;
       display:flex; flex-direction:column; gap:10px;
       position: sticky; top: 0; align-self: start;
+      max-height: calc(100vh - 140px);
+      overflow: auto;
       border-right: 1px solid #e5e7eb;
     }
 
-    /* Main content */
+    /* Main content scrolls independently of the sidebar */
     .content {
       background:#fff;
-      padding: 6px;
+      padding: 16px;
+      overflow: auto;
+      max-height: calc(100vh - 140px);
     }
 
     /* Buttons in the sidebar */
     .navbtn {
       text-align: left; border: 1px solid rgba(0,0,0,.12); background: transparent; color:#0e0e0e;
-      padding: 10px 12px; border-radius: 20px; cursor: pointer; font-weight:600;
+      padding: 10px 12px; border-radius: 14px; cursor: pointer; font-weight:600;
       display:flex; align-items:flex-start; justify-content:space-between; gap:8px;
       transition: transform .05s ease, background .2s ease, border-color .2s ease;
-      white-space: normal; line-height: 1.2;
+      white-space: normal; /* allow text wrap */
+      line-height: 1.2;
     }
     .navbtn small { opacity:.8; font-weight:500; display:block; }
     .navbtn:active { transform: translateY(1px); }
@@ -71,37 +77,99 @@
     .navbtn.done[data-theme="p4"] .check { background:#86efac; }
 
     /* Grid helpers */
-    .grid { display: grid; gap: 2px 20px; grid-template-columns: repeat(12,minmax(0,1fr)); }
-    .col-3 { grid-column: span 8; } .col-4 { grid-column: span 8; } .col-6 { grid-column: span 8; } .col-8 { grid-column: span 8; } .col-12 { grid-column: span 12; }
+    .grid { display: grid; gap: 16px; grid-template-columns: repeat(12,minmax(0,1fr)); }
+    .col-3 { grid-column: span 3; } .col-4 { grid-column: span 4; } .col-6 { grid-column: span 6; } .col-8 { grid-column: span 8; } .col-12 { grid-column: span 12; }
     @media (max-width: 960px) { .col-3, .col-4, .col-6, .col-8 { grid-column: span 12; } }
 
-    label { display:block; font-weight:600; margin-bottom:2px; color:#0a0a0a; }
+    label { display:block; font-weight:600; margin-bottom:6px; color:#0a0a0a; }
     select, input[type="text"], input[type="date"], input[type="email"], textarea, input[type="file"], input[type="number"] {
-      width: 100%; padding: 7px 9px; border-radius: 10px; border: 1px solid #d6d6de; background:#fff; min-width: 0;
-      min-height: 38px;
+      width: 100%; padding: 10px 12px; border-radius: 10px; border: 1px solid #d6d6de; background:#fff; min-width: 0;
     }
     textarea { min-height: 96px; resize: vertical; }
-    .muted { color:#475569; font-size: 12px; margin-top:2px; }
-    .row { display:flex; gap: 8px; align-items:center; flex-wrap: wrap; }
+    .muted { color:#475569; font-size: 12px; }
+    .row { display:flex; gap: 10px; align-items:center; flex-wrap: wrap; }
     .required::after { content:" *"; color:#ef4444; }
 
-    /* Nice arrow for selects */
-    select {
-      -webkit-appearance: none;
-      -moz-appearance: none;
-      appearance: none;
-      background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24'><path d='M7 10l5 5 5-5' fill='none' stroke='%23677589' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/></svg>");
-      background-repeat: no-repeat;
-      background-position: right 10px center;
-      padding-right: 34px;
+    .out {
+      background:#0f172a; color:#e5e7eb; border-radius: 12px; padding: 14px; font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      display:flex; justify-content: space-between; align-items: center; gap: 10px; word-break: break-word; flex-wrap: wrap;
     }
 
-    /* Align columns at top */
-    .col-6, .col-3, .col-4 { align-self:start; }
+    .btn { border:0; padding: 10px 14px; border-radius: 12px; cursor:pointer; color:#fff; font-weight:600; transition: transform .05s ease, filter .15s ease; }
+    .btn:active { transform: translateY(1px); }
+    .btn-blue{background:#2563eb;} .btn-green{background:#16a34a;} .btn-purple{background:#7c3aed;} .btn-teal{background:#0d9488;}
+    .btn-indigo{background:#4338ca;} .btn-rose{background:#e11d48;} .btn-amber{background:#f59e0b;color:#111827;} .btn-slate{background:#64748b;}
+    .btn:hover { filter: brightness(1.05); }
+    .btn[disabled] { opacity: .5; cursor: not-allowed; }
 
+    .footer { display:flex; justify-content:space-between; align-items:center; gap:12px; padding:12px 16px; border-top:1px solid #e5e7eb; background:#fff; flex-wrap: wrap; }
+
+    .panel { display:none; } .panel.active { display:block; }
+    .chip { display:inline-block; padding:4px 8px; background:#eef2ff; border-radius: 999px; font-size: 12px; }
+
+    .dropzone { border: 2px dashed #94a3b8; border-radius: 12px; padding: 18px; text-align:center; background:#f8fafc; transition: background .2s, border-color .2s; }
+    .dropzone.dragover { background:#eff6ff; border-color:#3b82f6; }
+    .files { margin-top:12px; border:1px solid #e5e7eb; border-radius:12px; padding:8px; max-height: 220px; overflow:auto; background:#fff; }
+    .file-row { display:flex; justify-content:space-between; align-items:center; gap:8px; padding:6px 8px; border-bottom:1px dashed #e5e7eb; }
+    .file-row:last-child { border-bottom:0; }
+    .file-meta { font-size: 12px; color:#475569; }
+    .file-actions { display:flex; gap:8px; }
+
+    .table { width: 100%; border-collapse: collapse; background:#fff; border-radius: 12px; overflow: hidden; border:1px solid #e5e7eb; table-layout: fixed; }
+    .table th, .table td { padding:10px; border-bottom:1px solid #e5e7eb; text-align:left; word-break: break-word; }
+    .table th { background:#f8fafc; font-weight:700; }
+    .table tfoot td { font-weight:700; background:#f9fafb; }
+    .table-wrap { overflow:auto; }
+
+    .num { width: 140px; }
+    .num input { width: 100%; padding:8px 10px; border-radius:8px; border:1px solid #d6d6de; text-align:right; }
+
+    .kpi { display:flex; gap:10px; flex-wrap:wrap; }
+    .kpi > div { background:#f8fafc; border:1px solid #e5e7eb; border-radius:12px; padding:10px 12px; min-width:180px; }
+    .status { display:inline-block; padding:4px 8px; border-radius:999px; font-size:12px; font-weight:700; }
+    .status.ok { background:#dcfce7; color:#14532d; }
+    .status.bad { background:#fee2e2; color:#7f1d1d; }
+
+    .help { font-size:12px; color:#475569; }
+    .subsection { margin-top:16px; }
+    .subsection h4 { margin: 0 0 8px 0; }
+
+    .toast { position: fixed; right: 16px; bottom: 16px; background: #111827; color:#fff;
+      padding: 10px 14px; border-radius: 10px; box-shadow: 0 6px 24px rgba(0,0,0,.18);
+      opacity: 0; transform: translateY(10px); transition: .2s ease;
+      z-index: 9999; pointer-events: none; }
+    .toast.show { opacity: 1; transform: translateY(0); }
+
+    /* Mobile tweaks: sidebar becomes horizontal scroller */
+    @media (max-width: 1024px) {
+      .layout { grid-template-columns: 1fr; }
+      .sidebar {
+        position: static; max-height: none; overflow: auto;
+        display: flex; flex-direction: row; gap: 8px; white-space: nowrap;
+        border-right: 0; border-bottom: 1px solid #e5e7eb;
+      }
+      .navbtn { flex: 0 0 auto; }
+      .content { max-height: none; }
+    }
+
+    /* Very small screens: tighten cells */
+    @media (max-width: 640px) {
+      .num { width: 120px; }
+      .table th, .table td { padding: 8px; }
+    }
   </style>
-</head>
 
+  <script>
+    // If you previously had a mismatched variable, make sure captureBtn is defined:
+    (function () {
+      if (!window.captureBtn) {
+        const btn = document.getElementById("captureBtn");
+        if (btn) window.captureBtn = btn;
+      }
+    })();
+  </script>
+
+</head>
 <body>
   <div class="container">
     <div class="card">
@@ -203,7 +271,7 @@
 
               <!-- A. OTP Cash Denomination -->
               <div class="col-12">
-                <h3 style="margin:12px 0 6px;">A. OTP Cash Denomination (Notes & Coins)</h3>
+                <h3 style="margin:18px 0 8px;">A. OTP Cash Denomination (Notes & Coins)</h3>
                 <div class="help">Enter quantity per denomination. Amount auto-calculates.</div>
                 <div class="table-wrap">
                   <table class="table" id="cashDenomTable" aria-label="OTP Cash Denomination">
