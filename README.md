@@ -74,7 +74,7 @@
     .navbtn.done[data-theme="p4"] .check { background:#86efac; }
 
     /* Grid helpers */
-    .grid { display: grid; gap: 16px; grid-template-columns: repeat(12,minmax(0,1fr)); }
+    .grid { display: grid; gap: 5px; grid-template-columns: repeat(12,minmax(0,1fr)); }
     .col-3 { grid-column: span 3; } .col-4 { grid-column: span 4; } .col-6 { grid-column: span 6; } .col-8 { grid-column: span 8; } .col-12 { grid-column: span 12; }
     @media (max-width: 960px) { .col-3, .col-4, .col-6, .col-8 { grid-column: span 12; } }
 
