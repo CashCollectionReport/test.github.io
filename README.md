@@ -16,18 +16,19 @@
 
     /* Container/card frame */
     .container { max-width: min(1100px, 96vw); margin: 0 auto; padding: 16px; }
-    .card { background: #252e97; border-radius: 18px; box-shadow: 0 10px 30px rgba(0,0,0,.08); overflow: hidden; }
-    .header { padding: 20px 24px; border-bottom: 1px solid rgba(255,255,255,.15); color:#fff; }
+    .card { background: #252e97; }
+    .header { background:transparent; }
     h1 { margin: 0 0 4px; font-size: clamp(18px, 2.5vw + 10px, 24px); }
     p.lead { margin: 0; color: #f0f3ff; opacity:.85; }
 
     /* Layout: fixed-width sidebar + scrollable content */
     .layout {
-      display: grid;
-      grid-template-columns: 260px 1fr;
-      gap: 0;
-      min-height: calc(100vh - 140px); /* viewport height minus header + margins */
-      background:#252e97;
+      display:grid;
+      grid-template-columns:260px 1fr;
+      gap:0;
+      /* let the page set the height; keep the inner area white so no blue strip shows */
+      background:#fff;                 /* was #252e97 */
+      }
     }
 
     /* Sticky sidebar – stays put while main content scrolls */
@@ -36,8 +37,6 @@
       padding: 12px;
       display:flex; flex-direction:column; gap:10px;
       position: sticky; top: 0; align-self: start;
-      max-height: calc(100vh - 140px);
-      overflow: auto;
       border-right: 1px solid #e5e7eb;
     }
 
@@ -45,8 +44,6 @@
     .content {
       background:#fff;
       padding: 16px;
-      overflow: auto;
-      max-height: calc(100vh - 140px);
     }
 
     /* Buttons in the sidebar */
