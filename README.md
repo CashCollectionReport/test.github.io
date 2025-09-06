@@ -82,12 +82,12 @@
     select option { white-space: normal; }
 
     .muted { color:#475569; font-size: 12px; }
-    .row { display:flex; gap: 8px; align-items:center; } /* was 10px */
+    .row { display:flex; gap: 5px; align-items:center; } /* was 10px */
     .required::after { content:" *"; color:#ef4444; }
 
     .out {
       background:#0f172a; color:#e5e7eb; border-radius: 12px; padding: 5px; font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
-      display:flex; justify-content: space-between; align-items: center; gap: 10px; word-break: break-all;
+      display:flex; justify-content: space-between; align-items: center; gap: 5px; word-break: break-all;
     }
 
     .btn { border:0; padding: 5px; border-radius: 12px; cursor:pointer; color:#fff; font-weight:600; transition: transform .05s ease, filter .15s ease; }
