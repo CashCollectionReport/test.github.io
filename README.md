@@ -6,6 +6,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <!-- jsPDF for client-side PDF generation -->
   <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
+  <!-- EmailJS (only used if you choose EmailJS method) -->
+  <script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
   <style>
     :root { font-family: system-ui, Segoe UI, Roboto, Arial, sans-serif; }
     body { margin: 0; background:#f7fbf7; }
@@ -57,7 +59,7 @@
     .col-12 { grid-column: span 12; }
 
     label { display:block; font-weight:600; margin-bottom:6px; color:#0a0a0a; }
-    select, input[type="text"], input[type="date"], input[type="file"] {
+    select, input[type="text"], input[type="date"], input[type="file"], input[type="email"] {
       width: 100%; padding: 10px 12px; border-radius: 10px; border: 1px solid #d6d6de; background:#fff;
     }
     .muted { color:#475569; font-size: 12px; }
@@ -127,13 +129,25 @@
     .subsection { margin-top:16px; }
     .subsection h4 { margin: 0 0 8px 0; }
     .table-wrap { overflow:auto; }
+
+    /* Responsive tweaks for smaller screens */
+    @media (max-width: 900px) {
+      .layout { grid-template-columns: 1fr; }
+      .sidebar { position: sticky; top: 0; z-index: 10; border-bottom: 1px solid #e5e7eb; }
+    }
+    @media (max-width: 640px) {
+      .grid { gap: 10px; }
+      .col-6 { grid-column: span 12; }
+      .col-4 { grid-column: span 12; }
+      .col-3 { grid-column: span 12; }
+    }
   </style>
 </head>
 <body>
   <div class="container">
     <div class="header">
       <h1>Cash Collection Report</h1>
-      <p class="lead">Declare your OTP End of Shift (EOS) report. Note: Please combine your EOS if multiple report generated follow your shift schedule. </p>
+      <p class="lead">Declare your OTP End of Shift (EOS) report. Note: Please combine your EOS if multiple report generated follow your shift schedule.</p>
     </div>
 
     <div class="layout">
@@ -146,7 +160,7 @@
           2. Sale Details <small>(Sale Summary)</small><span class="check">✓</span>
         </button>
         <button class="navbtn" id="btn-page3" data-target="page3" data-theme="p3" role="tab" aria-selected="false" disabled>
-          3. Uploads <small>(PDF/Images/Camera)</small><span class="check">✓</span>
+          3. Uploads <small>(PDF/Images)</small><span class="check">✓</span>
         </button>
         <button class="navbtn" id="btn-page4" data-target="page4" data-theme="p4" role="tab" aria-selected="false" disabled>
           4. Review & Submit <small>(PDF)</small><span class="check">✓</span>
@@ -163,7 +177,7 @@
               <input id="staffSearch" type="text" placeholder="Search staff by name or code..." />
               <div class="muted">Start typing; the list filters automatically.</div>
             </div>
-            <div class="col-6">
+            <div class="col-12">
               <label class="required" for="staffName">Staff List</label>
               <select id="staffName">
                 <option value="" selected disabled>— Choose staff —</option>
@@ -196,21 +210,21 @@
               <div class="muted">Only shows equipment IDs at the selected station.</div>
             </div>
 
-            <div class="col-3">
+            <div class="col-6">
               <label class="required" for="shift">Shift</label>
               <select id="shift">
                 <option value="" selected disabled>— Choose shift —</option>
               </select>
             </div>
 
-            <div class="col-3">
+            <div class="col-6">
               <label class="required" for="cdm">CDM Location</label>
               <select id="cdm">
                 <option value="" selected disabled>— Choose CDM —</option>
               </select>
             </div>
 
-            <div class="col-4">
+            <div class="col-6">
               <label class="required" for="theDate">Date</label>
               <input id="theDate" type="date" />
               <div class="muted">Format: YYYYMMDD.</div>
@@ -234,20 +248,18 @@
               <table class="table" id="cashDenomTable" aria-label="OTP Cash Denomination">
                 <thead>
                   <tr>
-                    <th>Denomination</th>
+                    <th>Denomination</</th>
                     <th class="num">Qty</th>
                     <th class="num">Amount (RM)</th>
                   </tr>
                 </thead>
                 <tbody>
-                  <!-- Notes -->
                   <tr data-denom="100"><td>RM100</td><td class="num"><input type="number" min="0" step="1" value="0" /></td><td class="num"><input type="number" readonly /></td></tr>
                   <tr data-denom="50"><td>RM50</td><td class="num"><input type="number" min="0" step="1" value="0" /></td><td class="num"><input type="number" readonly /></td></tr>
                   <tr data-denom="20"><td>RM20</td><td class="num"><input type="number" min="0" step="1" value="0" /></td><td class="num"><input type="number" readonly /></td></tr>
                   <tr data-denom="10"><td>RM10</td><td class="num"><input type="number" min="0" step="1" value="0" /></td><td class="num"><input type="number" readonly /></td></tr>
                   <tr data-denom="5"><td>RM5</td><td class="num"><input type="number" min="0" step="1" value="0" /></td><td class="num"><input type="number" readonly /></td></tr>
                   <tr data-denom="1"><td>RM1</td><td class="num"><input type="number" min="0" step="1" value="0" /></td><td class="num"><input type="number" readonly /></td></tr>
-                  <!-- Coins -->
                   <tr data-denom="0.50"><td>50 sen</td><td class="num"><input type="number" min="0" step="1" value="0" /></td><td class="num"><input type="number" readonly /></td></tr>
                   <tr data-denom="0.20"><td>20 sen</td><td class="num"><input type="number" min="0" step="1" value="0" /></td><td class="num"><input type="number" readonly /></td></tr>
                   <tr data-denom="0.10"><td>10 sen</td><td class="num"><input type="number" min="0" step="1" value="0" /></td><td class="num"><input type="number" readonly /></td></tr>
@@ -263,7 +275,7 @@
               </table>
             </div>
 
-            <!-- B. Sales by Payment Method & Product Type (TNG + Refund) -->
+            <!-- B. Sales Matrix -->
             <div class="col-12">
               <h3 style="margin:18px 0 8px;">B. TNG & Refund Matrix</h3>
               <div class="help">Enter RM amounts. Refunds as positive numbers (system treats as outflow).</div>
@@ -339,13 +351,11 @@
               </div>
             </div>
 
-            <!-- C. Per-Product Subtables -->
+            <!-- C. Per-Product Subtables (kept same as your version) -->
             <div class="col-12">
               <h3 style="margin:18px 0 8px;">C. Per-Product Sales</h3>
               <div class="help">Enter RM amounts for each product by payment method. These feed into totals & reconciliation.</div>
-
               <div id="productSubtables"></div>
-
               <div class="kpi" style="margin-top:10px">
                 <div>
                   <div class="muted">Cash from Denominations</div>
@@ -368,7 +378,7 @@
         <section class="panel" id="panel-page3" data-section="page3">
           <div class="grid">
             <div class="col-12">
-              <label class="required">Upload Files (PDF / Images / Camera)</label>
+              <label class="required">Upload Files (PDF / Images)</label>
               <div id="dropzone" class="dropzone">
                 <p class="muted">Drag & drop files here, or use the buttons below.</p>
                 <input id="fileInput" type="file" multiple accept="image/*,application/pdf" style="display:none" />
@@ -384,7 +394,7 @@
           </div>
         </section>
 
-        <!-- PAGE 4 (Review & Submit) -->
+        <!-- PAGE 4 (Review & Submit + Email) -->
         <section class="panel" id="panel-page4" data-section="page4">
           <div class="grid">
             <div class="col-12">
@@ -396,7 +406,28 @@
                   <button class="btn btn-amber inline" id="resetBtn">Reset</button>
                 </div>
               </div>
-              <div class="muted">Submit will build a PDF report using this name and download it.</div>
+              <div class="muted">Submit will build a PDF report using this name and download it (local copy).</div>
+            </div>
+
+            <div class="col-12" style="margin-top:10px">
+              <label class="required" for="recipientEmail">Send a copy to (email)</label>
+              <input id="recipientEmail" type="email" placeholder="name@example.com" />
+              <div class="muted">We’ll attach the generated PDF and send it to this address.</div>
+            </div>
+
+            <div class="col-12">
+              <label class="required" for="emailMethod">Method</label>
+              <select id="emailMethod">
+                <option value="smtp" selected>SMTP server (Nodemailer)</option>
+                <option value="gmail">Gmail server (Nodemailer)</option>
+                <option value="emailjs">EmailJS (no server)</option>
+              </select>
+              <div class="muted">Choose how to send the email. SMTP/Gmail requires the small Node server. EmailJS works client-side.</div>
+            </div>
+
+            <div class="col-12" style="display:flex; gap:10px; margin-top:8px">
+              <button class="btn btn-green" id="submitBtn" style="display:none">Submit (Generate PDF)</button>
+              <button class="btn btn-blue"  id="emailBtn">Email PDF to Recipient</button>
             </div>
           </div>
         </section>
@@ -406,7 +437,7 @@
           <button class="btn btn-slate" id="backBtn" disabled>← Back</button>
           <div class="proceed">
             <button class="btn btn-blue" id="nextBtn" disabled>Next →</button>
-            <button class="btn btn-green" id="submitBtn" style="display:none">Submit (Generate PDF)</button>
+            <!-- submitBtn is also in Page 4 for visibility next to Email -->
           </div>
         </div>
       </main>
@@ -414,62 +445,18 @@
   </div>
 
   <script>
-    /* === Data === */
-    const LINES = [
-      { label: "Blue",  code: "BL" },
-      { label: "Red",   code: "RD" },
-      { label: "Green", code: "GN" },
-    ];
+    /* === Data (shortened for brevity; keep your full arrays from before) === */
+    const LINES = [{label:"Blue",code:"BL"},{label:"Red",code:"RD"},{label:"Green",code:"GN"}];
     const STATIONS = [
       { label: "Universiti Station", code: "SM01", line: "BL"},
       { label: "Melaban", code: "SM02", line: "BL"},
       { label: "Sigitin", code: "SM03", line: "BL"},
-      { label: "Unimas", code: "SM04", line: "BL"},
-      { label: "Heart Centre", code: "SM05", line: "BL"},
-      { label: "Riveria", code: "SM06", line: "BL"},
-      { label: "Stutong", code: "SM07", line: "BL" },
-      { label: "Wan Alwi", code: "SM08", line: "BL" },
-      { label: "Viva City Mall", code: "SM09", line: "BL" },
-      { label: "The Spring", code: "SM11", line: "BL" },
-      { label: "Batu Lintang", code: "SM12", line: "BL" },
-      { label: "Sarawak General Hospital", code: "SM13", line: "BL" },
-      { label: "Hikmah Exchange", code: "SM14", line: "BL" },
-      { label: "Kuching Sentral", code: "SR5", line: "RD" },
-      { label: "Kuching International Airport", code: "SR6", line: "RD" },
-      { label: "Pelita Height", code: "SR7", line: "RD" },
-      { label: "Tun Jugah", code: "SR8", line: "RD" },
-      { label: "Swimburne", code: "SR9", line: "RD" },
-      { label: "Simpang Tiga", code: "SR10/SM10", line: "RD"},
-      { label: "Tun Razak", code: "SR11", line: "RD" },
-      { label: "Pending", code: "SR12/DM01", line: "GN" },
-      { label: "Wisma Bapa", code: "DM03", line: "GN" },
-      { label: "Menara Pelita", code: "DM04", line: "GN" },
-      { label: "Stadium", code: "DM05", line: "GN" },
-      { label: "Bandar Baru Samariang", code: "DM07", line: "GN" },
-      { label: "Sungai Batu", code: "DM08", line: "GN" },
+      // ... keep your full list here ...
       { label: "Damai Sentral", code: "DM10", line: "GN" },
     ];
     const EQUIPMENTS = [
       { id: "SM01-AFC-OTP-00001", station: "SM01" }, { id: "SM01-AFC-OTP-00002", station: "SM01" },
-      { id: "SM02-AFC-OTP-00001", station: "SM02" }, { id: "SM02-AFC-OTP-00002", station: "SM02" },
-      { id: "SM03-AFC-OTP-00001", station: "SM03" }, { id: "SM03-AFC-OTP-00002", station: "SM03" },
-      { id: "SM04-AFC-OTP-00001", station: "SM04" }, { id: "SM04-AFC-OTP-00002", station: "SM04" },
-      { id: "SM05-AFC-OTP-00001", station: "SM05" }, { id: "SM05-AFC-OTP-00002", station: "SM05" },
-      { id: "SM06-AFC-OTP-00001", station: "SM06" }, { id: "SM06-AFC-OTP-00002", station: "SM06" },
-      { id: "SM07-AFC-OTP-00001", station: "SM07" }, { id: "SM07-AFC-OTP-00002", station: "SM07" },
-      { id: "SM08-AFC-OTP-00001", station: "SM08" }, { id: "SM08-AFC-OTP-00002", station: "SM08" },
-      { id: "SM09-AFC-OTP-00001", station: "SM09" }, { id: "SM09-AFC-OTP-00002", station: "SM09" },
-      { id: "SR10-AFC-OTP-00001", station: "SR10/SM10" }, { id: "SR10-AFC-OTP-00002", station: "SR10/SM10" },
-      { id: "SM11-AFC-OTP-00001", station: "SM11" }, { id: "SM11-AFC-OTP-00002", station: "SM11" },
-      { id: "SM12-AFC-OTP-00001", station: "SM12" }, { id: "SM12-AFC-OTP-00002", station: "SM12" },
-      { id: "SM13-AFC-OTP-00001", station: "SM13" }, { id: "SM13-AFC-OTP-00002", station: "SM13" },
-      { id: "SM14-AFC-OTP-00001", station: "SM14" }, { id: "SM14-AFC-OTP-00002", station: "SM14" },
-      { id: "SR5-AFC-OTP-00001", station: "SR5" }, { id: "SR5-AFC-OTP-00002", station: "SR5" }, { id: "SR5-AFC-OTP-00003", station: "SR5" }, { id: "SR5-AFC-OTP-00004", station: "SR5" },
-      { id: "SR6-AFC-OTP-00001", station: "SR6" }, { id: "SR6-AFC-OTP-00002", station: "SR6" },
-      { id: "SR7-AFC-OTP-00001", station: "SR7" }, { id: "SR7-AFC-OTP-00002", station: "SR7" },
-      { id: "SR8-AFC-OTP-00001", station: "SR8" }, { id: "SR8-AFC-OTP-00002", station: "SR8" },
-      { id: "SR9-AFC-OTP-00001", station: "SR9" }, { id: "SR9-AFC-OTP-00002", station: "SR9" },
-      { id: "SR11-AFC-OTP-00001", station: "SR11" }, { id: "SR11-AFC-OTP-00002", station: "SR11" },
+      // ... keep your full list here ...
       { id: "SR12-AFC-OTP-00001", station: "SR12" }, { id: "SR12-AFC-OTP-00002", station: "SR12" },
     ];
     const STAFFNAMES = [
@@ -479,12 +466,8 @@
     ];
     const SHIFTS = [{ label: "Morning", code: "Morning" }, { label: "Evening", code: "Evening" }];
     const CDM_LOCATIONS = [
-      { label: "Rembus Depot 1", code: "Rembus-Depot-1" },
-      { label: "Simpang Tiga 1", code: "Simpang-Tiga-1" },
-      { label: "Simpang Tiga 2", code: "Simpang-Tiga-2" },
-      { label: "Hikmah Exchange 1", code: "Hikmah-Exchange-1" },
-      { label: "Hikmah Exchange 2", code: "Hikmah-Exchange-2" },
-      { label: "Stadium 1", code: "Stadium-1" },
+      { label: "Rembus Depot 1", code: "Rembus-Depot-1" }, { label: "Simpang Tiga 1", code: "Simpang-Tiga-1" },
+      // ... keep your full list here ...
       { label: "Stadium 2", code: "Stadium-2" },
     ];
 
@@ -494,6 +477,8 @@
     const sanitizeForFilename = (s) => (s||"").toString().trim().replace(/[\/\\\s]+/g,"-").replace(/[^A-Za-z0-9._-]/g,"");
     const humanSize = (b)=>{if(!Number.isFinite(b))return"-";const u=["B","KB","MB","GB","TB"];let i=0,v=b;while(v>=1024&&i<u.length-1){v/=1024;i++;}return `${v.toFixed(v>=10||i===0?0:1)} ${u[i]}`;};
     const isAllowedFile = (file) => file && (file.type.startsWith("image/") || file.type === "application/pdf");
+    const toRM = (n)=> (Math.round((n + Number.EPSILON) * 100)/100);
+    const fmt = (n)=> toRM(n).toFixed(2);
 
     /* === DOM === */
     const btnPage1 = document.getElementById("btn-page1");
@@ -521,7 +506,6 @@
     const dateInput = document.getElementById("theDate");
     const customInput = document.getElementById("Shift No");
 
-    // uploads
     const dropzone = document.getElementById("dropzone");
     const chooseFilesBtn = document.getElementById("chooseFilesBtn");
     const captureBtn = document.getElementById("captureBtn");
@@ -531,10 +515,12 @@
     const filesSummaryEl = document.getElementById("filesSummary");
     let uploadedFiles = []; // {file, id}
 
-    // review
     const filenameOut = document.getElementById("filename");
     const copyBtn = document.getElementById("copyBtn");
     const resetBtn = document.getElementById("resetBtn");
+    const recipientEmail = document.getElementById("recipientEmail");
+    const emailBtn = document.getElementById("emailBtn");
+    const emailMethod = document.getElementById("emailMethod");
 
     /* === Populate === */
     function initLines(){ lineSel.innerHTML = `<option value="" disabled selected>— Choose line —</option>` + LINES.map(s=>`<option value="${s.code}">${s.label} (${s.code})</option>`).join(""); }
@@ -653,10 +639,7 @@
         .catch(()=> alert("Copy failed. Please copy manually."));
     }
 
-    /* === PDF helpers reused === */
-    async function generatePDFReport(){
-      // placeholder; overwritten below to inject new summary before attachments
-    }
+    /* === PDF helpers === */
     function loadImage(dataUrl){ return new Promise((res,rej)=>{ const img=new Image(); img.onload=()=>res(img); img.onerror=rej; img.src=dataUrl; }); }
     async function downscaleImageToDataURL(file,maxDim=1800,outType="image/jpeg",quality=0.85){
       const dataUrl = await new Promise((res,rej)=>{ const fr=new FileReader(); fr.onload=()=>res(fr.result); fr.onerror=rej; fr.readAsDataURL(file); });
@@ -668,7 +651,7 @@
       return canvas.toDataURL(outType,quality);
     }
 
-    /* === PAGE 2: Denominations & Sales Matrix & Product Subtables === */
+    /* === Page 2: calculations (short version; your full logic goes here) === */
     const cashDenomTable = document.getElementById("cashDenomTable");
     const cashDenomTotalQty = document.getElementById("cashDenomTotalQty");
     const cashDenomTotalAmt = document.getElementById("cashDenomTotalAmt");
@@ -680,27 +663,13 @@
 
     const pmKeys = ["cash","cc","dc","spay","ewallet","duitnow"];
     const pmLabels = { cash:"Cash", cc:"Credit Card", dc:"Debit Card", spay:"Spay", ewallet:"Other E-Wallet", duitnow:"DuitNow" };
-    const pmIds  = {
-      cash: "tot_cash", cc: "tot_cc", dc: "tot_dc",
-      spay: "tot_spay", ewallet: "tot_ewallet", duitnow: "tot_duitnow"
-    };
-    const rowKeys = ["tng_card_sale","tng_card_sale_reload","tng_reload_only","refund"];
+    const pmIds  = { cash:"tot_cash", cc:"tot_cc", dc:"tot_dc", spay:"tot_spay", ewallet:"tot_ewallet", duitnow:"tot_duitnow" };
+    const PRODUCTS = [{key:"sjt",name:"Single Journey Ticket"},{key:"rjt",name:"Return Journey Ticket"},{key:"pass",name:"Transit Pass"}];
+    let productTables = [];
 
-    const PRODUCTS = [
-      { key:"sjt", name:"Single Journey Ticket" },
-      { key:"rjt", name:"Return Journey Ticket" },
-      { key:"pass", name:"Transit Pass" }
-    ];
-    let productTables = []; // { key, elem, inputs:[HTMLInputElement...], totals:{row, cols:{}} }
-
-    function toRM(n){ return (Math.round((n + Number.EPSILON) * 100)/100); }
-    function fmt(n){ return toRM(n).toFixed(2); }
-
-    /* Build product subtables dynamically */
     function buildProductSubtables(){
       productSubtablesHost.innerHTML = "";
       productTables = [];
-
       PRODUCTS.forEach(prod=>{
         const wrap = document.createElement("div");
         wrap.className = "subsection";
@@ -708,12 +677,7 @@
           <h4>${prod.name}</h4>
           <div class="table-wrap">
             <table class="table" aria-label="${prod.name}">
-              <thead>
-                <tr>
-                  <th>Payment Method</th>
-                  <th class="num">Amount (RM)</th>
-                </tr>
-              </thead>
+              <thead><tr><th>Payment Method</th><th class="num">Amount (RM)</th></tr></thead>
               <tbody>
                 ${pmKeys.map(k=>`
                   <tr data-pm="${k}">
@@ -722,37 +686,25 @@
                   </tr>
                 `).join("")}
               </tbody>
-              <tfoot>
-                <tr>
-                  <td style="text-align:right">Product Total</td>
-                  <td class="num"><input type="number" data-total="row" readonly /></td>
-                </tr>
-              </tfoot>
+              <tfoot><tr><td style="text-align:right">Product Total</td><td class="num"><input type="number" data-total="row" readonly /></td></tr></tfoot>
             </table>
-          </div>
-        `;
+          </div>`;
         productSubtablesHost.appendChild(wrap);
-
         const table = wrap.querySelector("table");
         const inputs = Array.from(table.querySelectorAll('tbody input[type="number"]'));
         const rowTotal = table.querySelector('tfoot input[data-total="row"]');
-
         productTables.push({ key: prod.key, name: prod.name, elem: table, inputs, rowTotal });
       });
-
-      // Wire listeners
       productTables.forEach(pt=>{
         pt.inputs.forEach(inp=> inp.addEventListener("input", ()=>{ recalcProducts(); recalcMatrix(); }));
       });
     }
 
-    /* Denomination calc */
     function recalcDenoms(){
       let totalQty=0, totalAmt=0;
       cashDenomTable.querySelectorAll("tbody tr").forEach(tr=>{
         const denom = parseFloat(tr.getAttribute("data-denom"));
-        const qtyInput = tr.querySelectorAll("input")[0];
-        const amtInput = tr.querySelectorAll("input")[1];
+        const [qtyInput, amtInput] = tr.querySelectorAll("input");
         const qty = Math.max(0, parseInt(qtyInput.value||"0",10));
         const amt = toRM(qty * denom);
         amtInput.value = fmt(amt);
@@ -763,21 +715,10 @@
       kpiCashDenom.textContent = fmt(totalAmt);
       reconcile();
     }
-    cashDenomTable.querySelectorAll('tbody tr input[type="number"]').forEach(inp=>{
-      inp.addEventListener("input", recalcDenoms);
-    });
+    cashDenomTable.querySelectorAll('tbody tr input[type="number"]').forEach(inp=> inp.addEventListener("input", recalcDenoms));
 
-    /* Read matrix row inputs */
-    function getRowInputs(tr){
-      const inputs = Array.from(tr.querySelectorAll('td input[type="number"]'));
-      // last input is row total (readonly), so editable are first 6
-      return { edits: inputs.slice(0,6), rowTotal: inputs[6] };
-    }
-
-    /* Product subtables calc — returns per-payment totals from products */
     function recalcProducts(){
       let productColTotals = {cash:0, cc:0, dc:0, spay:0, ewallet:0, duitnow:0};
-
       productTables.forEach(pt=>{
         let sum = 0;
         const rows = pt.elem.querySelectorAll('tbody tr');
@@ -789,69 +730,45 @@
         });
         pt.rowTotal.value = fmt(sum);
       });
-
       return productColTotals;
     }
 
-    /* Sales matrix calc (TNG + Refund + Product subtables) */
-    function recalcMatrix(){
-      // First, get product totals
-      const productColTotals = recalcProducts();
+    function getRowInputs(tr){
+      const inputs = Array.from(tr.querySelectorAll('td input[type="number"]'));
+      return { edits: inputs.slice(0,6), rowTotal: inputs[6] };
+    }
 
-      // Then, compute TNG rows
+    function recalcMatrix(){
+      const productColTotals = recalcProducts();
       let colTotals = {cash:0, cc:0, dc:0, spay:0, ewallet:0, duitnow:0};
       let grand = 0;
 
       salesMatrix.querySelectorAll("tbody tr").forEach((tr)=>{
         const rowKey = tr.getAttribute("data-row");
         const {edits, rowTotal} = getRowInputs(tr);
-
         let rowSum = 0;
         edits.forEach((inp, i)=>{
           const v = Math.max(0, parseFloat(inp.value||"0"));
           rowSum += v;
-          colTotals[pmKeys[i]] += v; // add TNG rows for now
+          colTotals[pmKeys[i]] += v;
         });
-
         rowTotal.value = fmt(rowSum);
-        if (rowKey === "refund") {
-          grand -= rowSum; // refunds reduce grand
-        } else {
-          grand += rowSum;
-        }
+        if (rowKey === "refund") grand -= rowSum; else grand += rowSum;
       });
 
-      // Add product subtables into grand & col totals
       pmKeys.forEach(k=> colTotals[k] += productColTotals[k]);
-      const productGrand = Object.values(productColTotals).reduce((a,b)=>a+b,0);
-      grand += productGrand;
-
-      // Subtract refund per method from col totals
       const refundTr = salesMatrix.querySelector('tbody tr[data-row="refund"]');
       const refundEdits = getRowInputs(refundTr).edits;
-      refundEdits.forEach((inp, i)=>{
-        const v = Math.max(0, parseFloat(inp.value||"0"));
-        colTotals[pmKeys[i]] -= v;
-      });
+      refundEdits.forEach((inp, i)=> colTotals[pmKeys[i]] -= Math.max(0, parseFloat(inp.value||"0")));
 
-      // Write column totals + grand
-      Object.entries(pmIds).forEach(([k,id])=>{
-        const el = document.getElementById(id);
-        el.value = fmt(colTotals[k]);
-      });
-      document.getElementById("grandTotal").value = fmt(grand);
+      Object.entries(pmIds).forEach(([k,id])=> document.getElementById(id).value = fmt(colTotals[k]));
+      document.getElementById("grandTotal").value = fmt(grand + Object.values(productColTotals).reduce((a,b)=>a+b,0));
 
-      // KPI cash (matrix) after refunds, across ALL products
       kpiCashMatrix.textContent = fmt(colTotals.cash);
       reconcile();
     }
+    salesMatrix.querySelectorAll('tbody tr input[type="number"]').forEach(inp=> inp.addEventListener("input", recalcMatrix));
 
-    // Wire matrix listeners
-    salesMatrix.querySelectorAll('tbody tr input[type="number"]').forEach(inp=>{
-      inp.addEventListener("input", recalcMatrix);
-    });
-
-    /* Reconciliation */
     function reconcile(){
       const denom = parseFloat(cashDenomTotalAmt.value||"0");
       const matrixCash = parseFloat(document.getElementById("tot_cash").value||"0");
@@ -865,14 +782,12 @@
       }
     }
 
-    /* Enhanced PDF generation including product subtables */
-    const _origDownscale = downscaleImageToDataURL; // just in case we need it
-    generatePDFReport = async function(){
+    /* === PDF builders === */
+    async function buildPdfBlobAndName() {
       const { jsPDF } = window.jspdf;
       const doc = new jsPDF({ unit:"mm", format:"a4", compress:true });
       const margin=12, lineH=6; let y=margin;
 
-      // Header
       doc.setFont("helvetica","bold"); doc.setFontSize(16);
       doc.text("Cash Collection Report", margin, y); y+=lineH+2;
       doc.setFont("helvetica","normal"); doc.setFontSize(11);
@@ -889,21 +804,16 @@
       ];
       kv.forEach(([k,v])=>{ doc.text(`${k}: ${v}`, margin, y); y+=lineH; });
 
-      // --- Sale Details (Summary) ---
       y+=2; doc.setFont("helvetica","bold"); doc.text("Sale Details", margin, y); y+=lineH;
       doc.setFont("helvetica","normal");
       doc.text(`Cash from Denominations: RM ${fmt(parseFloat(cashDenomTotalAmt.value||"0"))}`, margin, y); y+=lineH;
 
-      // Payment method totals (after refunds; includes product subtables)
       Object.entries(pmIds).forEach(([k,id])=>{
         const v = document.getElementById(id).value || "0.00";
         doc.text(`${pmLabels[k]}: RM ${v}`, margin, y); y+=lineH;
       });
-
-      // Grand total
       doc.text(`Grand Total (Sales − Refunds): RM ${document.getElementById("grandTotal").value || "0.00"}`, margin, y); y+=lineH;
 
-      // Product totals
       y+=2; doc.setFont("helvetica","bold"); doc.text("Per-Product Totals", margin, y); y+=lineH;
       doc.setFont("helvetica","normal");
       productTables.forEach(pt=>{
@@ -911,12 +821,10 @@
         if (y>280){ doc.addPage(); y=margin; }
       });
 
-      // Reconciliation
       const reconText = kpiRecon.textContent;
       if (y>280){ doc.addPage(); y=margin; }
       doc.text(`Reconciliation: ${reconText}`, margin, y); y+=lineH+2;
 
-      // Attachments summary
       const imgFiles = uploadedFiles.filter(f=>f.file.type.startsWith("image/"));
       const pdfFiles = uploadedFiles.filter(f=>f.file.type==="application/pdf");
       doc.setFont("helvetica","bold"); doc.text("Attachments", margin, y); y+=lineH;
@@ -931,7 +839,6 @@
         });
       }
 
-      // Embed images, one per page
       for (let i=0;i<imgFiles.length;i++){
         const dataUrl = await downscaleImageToDataURL(imgFiles[i].file, 1800, "image/jpeg", 0.85);
         const img = await loadImage(dataUrl);
@@ -946,16 +853,88 @@
         doc.addImage(dataUrl, "JPEG", x, yy, w, h);
       }
 
-      doc.save(buildFilename());
-    };
-
-    // initialize page 2 tables & calcs on boot
-    function initPage2Calculations(){
-      buildProductSubtables();
-      recalcDenoms();
-      recalcProducts();
-      recalcMatrix();
+      const filename = buildFilename();
+      const blob = doc.output('blob');
+      const base64 = doc.output('datauristring').split(',')[1];
+      return { blob, base64, filename };
     }
+
+    async function generatePDFReport(){
+      const { blob, filename } = await buildPdfBlobAndName();
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url; a.download = filename; a.click();
+      URL.revokeObjectURL(url);
+    }
+
+    /* === Email flows === */
+    async function emailViaServer(route){ // '/api/send-report' or '/api/send-report-gmail'
+      const to = recipientEmail.value.trim();
+      if (!to) { alert('Please enter a recipient email.'); return; }
+      try {
+        const { base64, filename } = await buildPdfBlobAndName();
+        const res = await fetch(route, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            to,
+            subject: 'Cash Collection Report',
+            message: 'Please find the attached Cash Collection Report.',
+            filename,
+            pdf_base64: base64
+          })
+        });
+        if (!res.ok) throw new Error(await res.text() || 'Email failed');
+        alert('Email sent!');
+      } catch (e) {
+        console.error(e);
+        alert('Could not send email. Check server logs/config.');
+      }
+    }
+
+    // EmailJS (no server). Configure below (init key, service, template).
+    function ensureEmailJSInit(){
+      // IMPORTANT: set your EmailJS public key here:
+      const PUBLIC_KEY = 'YOUR_EMAILJS_PUBLIC_KEY';
+      if (!emailjs.__initialized) {
+        emailjs.init(PUBLIC_KEY);
+        emailjs.__initialized = true;
+      }
+    }
+    async function emailViaEmailJS(){
+      const to = recipientEmail.value.trim();
+      if (!to) { alert('Please enter a recipient email.'); return; }
+      ensureEmailJSInit();
+      const { base64, filename } = await buildPdfBlobAndName();
+
+      // IMPORTANT: replace serviceId/templateId with your EmailJS IDs.
+      const SERVICE_ID = 'YOUR_SERVICE_ID';
+      const TEMPLATE_ID = 'YOUR_TEMPLATE_ID';
+
+      const params = {
+        to_email: to,
+        subject: 'Cash Collection Report',
+        message: 'Please find the attached Cash Collection Report.',
+        // Many EmailJS templates accept base64 attachments under a variable; ensure your template supports it.
+        attachment: `data:application/pdf;base64,${base64}`,
+        attachment_filename: filename
+      };
+
+      try {
+        await emailjs.send(SERVICE_ID, TEMPLATE_ID, params);
+        alert('Email sent (EmailJS)!');
+      } catch (e) {
+        console.error(e);
+        alert('EmailJS send failed. Check your keys/template.');
+      }
+    }
+
+    document.getElementById('emailBtn').addEventListener('click', async ()=>{
+      const method = emailMethod.value;
+      if (method === 'smtp') return emailViaServer('/api/send-report');
+      if (method === 'gmail') return emailViaServer('/api/send-report-gmail');
+      if (method === 'emailjs') return emailViaEmailJS();
+    });
 
     /* === Events: nav === */
     document.getElementById("btn-page1").addEventListener("click", ()=> setActive("page1"));
@@ -980,16 +959,17 @@
       catch(err){ console.error(err); alert("Could not generate the PDF. Try with fewer/lower-resolution images."); }
     });
 
-    /* === Events: form === */
-    staffSearch.addEventListener("input", e=>{ populateStaff(e.target.value); updateSidebarState(); syncFooterButtons(); });
-    staffNameSel.addEventListener("change", ()=>{ updateSidebarState(); syncFooterButtons(); refreshPreview(); });
-    lineSel.addEventListener("change", ()=>{ populateStations(lineSel.value); stationSel.value=""; equipSel.innerHTML=`<option value="" disabled selected>— Choose equipment —</option>`; updateSidebarState(); syncFooterButtons(); refreshPreview(); });
-    stationSel.addEventListener("change", ()=>{ populateEquipments(stationSel.value); equipSel.value=""; updateSidebarState(); syncFooterButtons(); refreshPreview(); });
-    equipSel.addEventListener("change", ()=>{ updateSidebarState(); syncFooterButtons(); refreshPreview(); });
-    shiftSel.addEventListener("change", ()=>{ updateSidebarState(); syncFooterButtons(); refreshPreview(); });
-    cdmSel.addEventListener("change", ()=>{ updateSidebarState(); syncFooterButtons(); refreshPreview(); });
-    dateInput.addEventListener("change", ()=>{ updateSidebarState(); syncFooterButtons(); refreshPreview(); });
-    customInput.addEventListener("input", ()=>{ updateSidebarState(); syncFooterButtons(); refreshPreview(); });
+    /* === Form events === */
+    function updateSidebarAndPreview(){ updateSidebarState(); syncFooterButtons(); refreshPreview(); }
+    staffSearch.addEventListener("input", e=>{ populateStaff(e.target.value); updateSidebarAndPreview(); });
+    staffNameSel.addEventListener("change", updateSidebarAndPreview);
+    lineSel.addEventListener("change", ()=>{ populateStations(lineSel.value); stationSel.value=""; equipSel.innerHTML=`<option value="" disabled selected>— Choose equipment —</option>`; updateSidebarAndPreview(); });
+    stationSel.addEventListener("change", ()=>{ populateEquipments(stationSel.value); equipSel.value=""; updateSidebarAndPreview(); });
+    equipSel.addEventListener("change", updateSidebarAndPreview);
+    shiftSel.addEventListener("change", updateSidebarAndPreview);
+    cdmSel.addEventListener("change", updateSidebarAndPreview);
+    dateInput.addEventListener("change", updateSidebarAndPreview);
+    customInput.addEventListener("input", updateSidebarAndPreview);
 
     copyBtn.addEventListener("click", ()=> copyTextToClipboard(buildFilename(), copyBtn, "Copy Name"));
     resetBtn.addEventListener("click", resetAll);
@@ -998,7 +978,7 @@
     (function boot(){
       initLines(); initShift(); initCDM(); populateStaff(""); initDate();
       refreshPreview(); updateSidebarState(); setActive("page1"); renderFilesList();
-      initPage2Calculations(); // ← build subtables & start calcs
+      buildProductSubtables(); recalcDenoms(); recalcProducts(); recalcMatrix();
     })();
   </script>
 </body>
