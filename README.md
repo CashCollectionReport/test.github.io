@@ -51,7 +51,7 @@
     .content { background:#fff; padding: 5px; }
 
     /* ↓↓↓ Tighter grid spacing */
-    .grid { display: grid; gap: 0px; grid-template-columns: repeat(12,1fr); }
+    .grid { display: grid; gap: 0px; grid-template-columns: repeat(5,1fr); }
     .col-3 { grid-column: span 8; }
     .col-4 { grid-column: span 8; }
     .col-6 { grid-column: span 8; }
