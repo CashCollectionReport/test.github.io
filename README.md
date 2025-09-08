@@ -10,7 +10,7 @@
     :root { font-family: system-ui, Segoe UI, Roboto, Arial, sans-serif; }
     body { margin: 0; background:#f7fbf7; }
     .container {
-      max-width: 1100px; margin: 32px auto; padding: 0;
+      max-width: 1960px; margin: 32px auto; padding: 0;
       background: #252e97; border-radius: 18px; box-shadow: 0 10px 30px rgba(0,0,0,.08);
       overflow: hidden;
     }
